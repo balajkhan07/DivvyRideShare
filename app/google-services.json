@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "91606026889",
+    "firebase_url": "https://divvyrideshare-370ea.firebaseio.com",
+    "project_id": "divvyrideshare-370ea",
+    "storage_bucket": "divvyrideshare-370ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91606026889:android:37df5dd846ebe082",
+        "android_client_info": {
+          "package_name": "com.example.balaj.divvyrideshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "91606026889-jacf375ntc4o2l0pkhu034tp5bgj5160.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.balaj.divvyrideshare",
+            "certificate_hash": "e08edb85f06ce3e11fe24f2bd592dc4ab084dca4"
+          }
+        },
+        {
+          "client_id": "91606026889-0dlog0qpsijc2rf6u3ctd32pqiienulo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTe9pCM065V9cKgHPzy3-5tz6pqoWtXEo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "91606026889-0dlog0qpsijc2rf6u3ctd32pqiienulo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
