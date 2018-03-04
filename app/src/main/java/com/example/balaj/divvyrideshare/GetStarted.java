@@ -1,25 +1,19 @@
 package com.example.balaj.divvyrideshare;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 public class GetStarted extends AppCompatActivity {
 
-    Button getStarted;
-    Switch userTypeSwitch;
+    private Button getStarted;
+    private Switch userTypeSwitch;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +21,16 @@ public class GetStarted extends AppCompatActivity {
         setContentView(R.layout.activity_get_started);
         getSupportActionBar().hide();
 
+        firebaseAuth = FirebaseAuth.getInstance();
+        if (firebaseAuth.getCurrentUser() != null){
+            Intent intent = new Intent(GetStarted.this, RiderActivity.class);
+            startActivity(intent);
+        }
+
         getStarted = (Button)findViewById(R.id.getStarted);
         userTypeSwitch = (Switch)findViewById(R.id.userTypeSwitch);
+
+
 
         getStarted.setOnClickListener(new View.OnClickListener() {
             @Override

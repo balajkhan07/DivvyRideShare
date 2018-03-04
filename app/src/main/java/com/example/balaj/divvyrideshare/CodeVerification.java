@@ -1,14 +1,12 @@
 package com.example.balaj.divvyrideshare;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -17,21 +15,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class CodeVerification extends AppCompatActivity {
 
-    Button submitCode;
-    EditText codeVerify;
-    String codeNumber;
-    FirebaseAuth mAuth;
-    FirebaseDatabase database;
-    DatabaseReference myRef;
-    String getUserType;
+    private Button submitCode;
+    private EditText codeVerify;
+    private String codeNumber;
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference mFirebaseReference;
+    private String getUserType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +34,8 @@ public class CodeVerification extends AppCompatActivity {
         setContentView(R.layout.activity_code_verification);
         getSupportActionBar().hide();
 
-        database = FirebaseDatabase.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        mFirebaseReference = firebaseDatabase.getReference("Divvy Ride Share");
         mAuth = FirebaseAuth.getInstance();
         codeVerify = (EditText)findViewById(R.id.codeVerify);
         submitCode = (Button)findViewById(R.id.submitCode);
@@ -56,7 +52,6 @@ public class CodeVerification extends AppCompatActivity {
                 codeNumber = codeVerify.getText().toString();
                 credential[0] = PhoneAuthProvider.getCredential(mVerificationId, codeNumber);
                 signInWithPhoneAuthCredential(credential[0]);
-                Toast.makeText(CodeVerification.this, getUserType, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -69,12 +64,17 @@ public class CodeVerification extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     // Sign in success, update UI with the signed-in user's information
                     if (getUserType.equals("rider")) {
+                        User users = new User(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
+                        mFirebaseReference.child(mAuth.getCurrentUser().getUid()).setValue(users);
                         Intent intent = new Intent(CodeVerification.this, RiderActivity.class);
+                        startActivity(intent);
+                    }if (getUserType.equals("driver")){
+                        User users = new User(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
+                        mFirebaseReference.child(mAuth.getCurrentUser().getUid()).setValue(users);
+                        Intent intent = new Intent(CodeVerification.this, DriverActivity.class);
                         startActivity(intent);
                     }
                     // ...
-                    //myRef = database.getReference(mAuth.getCurrentUser().getPhoneNumber());
-                    //writeNewUser(mAuth.getCurrentUser().getUid(), "Balaj Khan", "balajkhan07@gmail.com");
                 } else {
                     // Sign in failed, display a message and update the UI
                     if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
@@ -84,28 +84,20 @@ public class CodeVerification extends AppCompatActivity {
                 }
             });
     }
-
-    private void writeNewUser(String userId, String name, String email) {
-        User user = new User(userId,name, email);
-
-        myRef.setValue(user);
-    }
 }
 
 class User {
 
-    public String username;
-    public String email;
-    String userId;
+    public String usertype;
+    public double phoneNumber;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String userId, String username, String email) {
-        this.username = username;
-        this.email = email;
-        this.userId = userId;
+    public User(String usertype, double phoneNumber) {
+        this.usertype = usertype;
+        this.phoneNumber = phoneNumber;
     }
 
 }
