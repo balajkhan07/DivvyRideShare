@@ -62,7 +62,7 @@ public class CodeVerification extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    // Sign in success, update UI with the signed-in user's information
+
                     if (getUserType.equals("rider")) {
                         User users = new User(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
                         mFirebaseReference.child(mAuth.getCurrentUser().getUid()).setValue(users);
@@ -74,30 +74,13 @@ public class CodeVerification extends AppCompatActivity {
                         Intent intent = new Intent(CodeVerification.this, DriverActivity.class);
                         startActivity(intent);
                     }
-                    // ...
                 } else {
-                    // Sign in failed, display a message and update the UI
+
                     if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
+
                     }
                 }
                 }
             });
     }
-}
-
-class User {
-
-    public String usertype;
-    public double phoneNumber;
-
-    public User() {
-        // Default constructor required for calls to DataSnapshot.getValue(User.class)
-    }
-
-    public User(String usertype, double phoneNumber) {
-        this.usertype = usertype;
-        this.phoneNumber = phoneNumber;
-    }
-
 }

@@ -8,12 +8,21 @@ import android.widget.Button;
 import android.widget.Switch;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Map;
 
 public class GetStarted extends AppCompatActivity {
 
     private Button getStarted;
     private Switch userTypeSwitch;
     private FirebaseAuth firebaseAuth;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +30,25 @@ public class GetStarted extends AppCompatActivity {
         setContentView(R.layout.activity_get_started);
         getSupportActionBar().hide();
 
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("Divvy Ride Share");
         firebaseAuth = FirebaseAuth.getInstance();
         if (firebaseAuth.getCurrentUser() != null){
+
+            databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
             Intent intent = new Intent(GetStarted.this, RiderActivity.class);
             startActivity(intent);
         }
