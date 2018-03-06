@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

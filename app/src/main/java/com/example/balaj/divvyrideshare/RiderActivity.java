@@ -1,5 +1,6 @@
 package com.example.balaj.divvyrideshare;
 
+import org.json.*;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -200,23 +201,5 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
                 Log.i("Error", "Permission Required");
             }
         }
-    }
-}
-
-class GeoPoints{
-
-    double latitude;
-    double longitude;
-    String userId;
-
-    GeoPoints(){
-
-    }
-
-    GeoPoints(double lat, double lon, String userId){
-
-        this.latitude = lat;
-        this.longitude = lon;
-        this.userId = userId;
     }
 }
