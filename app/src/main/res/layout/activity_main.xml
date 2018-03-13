@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    tools:context="com.example.balaj.divvyrideshare.MainActivity">
+<RelativeLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:context=".MainActivity"
+        tools:layout_editor_absoluteX="8dp"
+        tools:ignore="MissingConstraints"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/cellNumber"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="18dp"
         android:text="Enter Your Number"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="105dp"
@@ -21,6 +27,9 @@
         android:id="@+id/cellNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/submitNumber"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="14dp"
         android:ems="10"
         android:inputType="phone"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -32,10 +41,12 @@
         android:id="@+id/submitNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:text="Submit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+</RelativeLayout>

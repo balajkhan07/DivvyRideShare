@@ -1,6 +1,5 @@
 package com.example.balaj.divvyrideshare;
 
-import org.json.*;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -33,7 +32,7 @@ import java.util.Map;
 
 public class RiderActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap;
+    private GoogleMap map;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private FirebaseAuth firebaseAuth;
@@ -45,9 +44,9 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
     public void updateMap(Location location){
 
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.clear();
-        mMap.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
+        map.clear();
+        map.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
     }
 
     public void signOutButton(View view){
@@ -93,8 +92,7 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
                 if (lastKnownLocation != null) {
 
                     final GeoPoints geoPoints = new GeoPoints(lastKnownLocation.getLatitude(),
-                            lastKnownLocation.getLongitude(),
-                            firebaseAuth.getCurrentUser().getUid());
+                            lastKnownLocation.getLongitude());
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(geoPoints);
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -140,7 +138,7 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        mMap = googleMap;
+        map = googleMap;
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
 

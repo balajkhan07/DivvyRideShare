@@ -4,16 +4,14 @@ public class GeoPoints{
 
     double latitude;
     double longitude;
-    String userId;
 
     GeoPoints(){
 
     }
 
-    GeoPoints(double lat, double lon, String userId){
+    GeoPoints(double lat, double lon){
 
         this.latitude = lat;
         this.longitude = lon;
-        this.userId = userId;
     }
 }

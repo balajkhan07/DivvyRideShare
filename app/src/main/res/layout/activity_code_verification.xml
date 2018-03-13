@@ -6,32 +6,40 @@
     android:layout_height="match_parent"
     tools:context="com.example.balaj.divvyrideshare.CodeVerification">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
+    <RelativeLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        tools:context="com.example.balaj.divvyrideshare.CodeVerification">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:context=".CodeVerification"
+        tools:layout_editor_absoluteX="8dp"
+        tools:ignore="MissingConstraints"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditText
-        android:id="@+id/codeVerify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="phone"
-        tools:ignore="MissingConstraints" />
+        <EditText
+            android:id="@+id/codeVerify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/submitCode"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="17dp"
+            android:ems="10"
+            android:inputType="phone"
+            tools:ignore="MissingConstraints" />
 
-    <Button
-        android:id="@+id/submitCode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Enter Code"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:ignore="MissingConstraints" />
+        <Button
+            android:id="@+id/submitCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="Enter Code"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            tools:ignore="MissingConstraints" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

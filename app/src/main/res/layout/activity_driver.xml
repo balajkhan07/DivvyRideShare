@@ -11,14 +11,24 @@
         android:layout_height="match_parent">
 
 
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="49dp" />
+
         <Button
-            android:id="@+id/signOut"
+            android:id="@+id/signOutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="23dp"
             android:onClick="signOutButton"
             android:text="Sign Out" />
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
