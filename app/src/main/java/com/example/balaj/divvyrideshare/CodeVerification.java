@@ -21,7 +21,6 @@ import com.google.firebase.database.FirebaseDatabase;
 public class CodeVerification extends AppCompatActivity {
 
     private Button submitCode;
-    private Button haha;
     private EditText codeVerify;
     private String codeNumber;
     private FirebaseAuth mAuth;

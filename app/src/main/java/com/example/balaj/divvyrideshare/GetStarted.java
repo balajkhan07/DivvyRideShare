@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -14,8 +13,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.Map;
 
 public class GetStarted extends AppCompatActivity {
 
@@ -75,7 +72,7 @@ public class GetStarted extends AppCompatActivity {
                 String userType = "rider";
                 if(userTypeSwitch.isChecked())
                     userType = "driver";
-                Intent i = new Intent(GetStarted.this, MainActivity.class);
+                Intent i = new Intent(GetStarted.this, LoginActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("userType", userType);
                 i.putExtras(bundle);

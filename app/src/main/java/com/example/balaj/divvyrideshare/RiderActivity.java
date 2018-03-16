@@ -58,7 +58,7 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    public void callRideButton(View view) {
+    public void callRideButton(View view) throws Exception {
 
         if (requestActive) {
 
@@ -91,8 +91,8 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
                 final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (lastKnownLocation != null) {
 
-                    final GeoPoints geoPoints = new GeoPoints(lastKnownLocation.getLatitude(),
-                            lastKnownLocation.getLongitude());
+                    final GeoPoints geoPoints = new GeoPoints(AESCrypt.encrypt(Double.toString(lastKnownLocation.getLatitude())),
+                            AESCrypt.encrypt(Double.toString(lastKnownLocation.getLongitude())));
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(geoPoints);
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override

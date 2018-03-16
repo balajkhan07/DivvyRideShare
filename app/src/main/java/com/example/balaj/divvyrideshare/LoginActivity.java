@@ -9,14 +9,13 @@ import android.widget.EditText;
 
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private Button submitNumber;
     private EditText cellNumber;
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 mVerificationId = verificationId;
                 mResendToken = token;
 
-                Intent i = new Intent(MainActivity.this, CodeVerification.class);
+                Intent i = new Intent(LoginActivity.this, CodeVerification.class);
                 Bundle bundle = new Bundle();
                 bundle.putString("verifyCode", mVerificationId);
                 bundle.putString("userType",getUserType);

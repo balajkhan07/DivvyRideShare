@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
+        <activity android:name=".LoginActivity" />
         <activity android:name=".CodeVerification" />
         <activity android:name=".GetStarted">
             <intent-filter>
@@ -40,7 +40,10 @@
         <activity
             android:name=".RiderActivity"
             android:label="@string/title_activity_rider" />
-        <activity android:name=".DriverActivity"></activity>
+        <activity android:name=".DriverActivity" />
+        <activity
+            android:name=".DriverLocationActivity"
+            android:label="@string/title_activity_driver_location"></activity>
     </application>
 
 </manifest>
