@@ -16,19 +16,15 @@ import com.google.firebase.database.ValueEventListener;
 
 public class GetStarted extends AppCompatActivity {
 
-    private Button getStarted;
     private Switch userTypeSwitch;
-    private FirebaseAuth firebaseAuth;
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("Divvy Ride Share");
-        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Divvy Ride Share");
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
         if (firebaseAuth.getCurrentUser() != null){
 
@@ -61,9 +57,8 @@ public class GetStarted extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_started);
-        getSupportActionBar().hide();
 
-        getStarted = (Button)findViewById(R.id.getStarted);
+        Button getStarted = (Button) findViewById(R.id.getStarted);
         userTypeSwitch = (Switch)findViewById(R.id.userTypeSwitch);
 
         getStarted.setOnClickListener(new View.OnClickListener() {

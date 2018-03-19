@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,15 +34,21 @@ import java.util.Map;
 public class DriverActivity extends AppCompatActivity {
 
     private ListView requestlistView;
-    private ArrayList<String> requests = new ArrayList<String>();
-    private ArrayList<Double> requestLatitude = new ArrayList<>();
-    private ArrayList<Double> requestLongitude = new ArrayList<>();
+    private ArrayList<String> requests;
+    private ArrayList<Double> requestLatitude;
+    private ArrayList<Double> requestLongitude;
     private ArrayAdapter arrayAdapter;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
+
+    public DriverActivity() {
+        requestLatitude = new ArrayList<>();
+        requestLongitude = new ArrayList<>();
+        requests = new ArrayList<>();
+    }
 
     public void signOutButton(View view){
 
@@ -69,16 +77,12 @@ public class DriverActivity extends AppCompatActivity {
                             String lon = (String) snapshot.child("longitude").getValue();
                             String latitude = AESCrypt.decrypt(lat);
                             String longitude = AESCrypt.decrypt(lon);
-
                             double distanceInMiles = (double) Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
                             double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
-
                             requests.add(Double.toString(distanceODP) + " km");
-
                             requestLatitude.add(Double.parseDouble(latitude));
                             requestLongitude.add(Double.parseDouble(longitude));
                             requestlistView.requestLayout();
-
                         } catch (Exception e) {
                             Toast.makeText(DriverActivity.this, e.toString()+"", Toast.LENGTH_SHORT).show();;
                         }
@@ -119,13 +123,15 @@ public class DriverActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver);
-        getSupportActionBar().hide();
-        setTitle("Active Requests");
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        myToolbar.setBackgroundColor(Color.rgb(92,0,0));
+        myToolbar.setTitleTextColor(Color.WHITE);
+        setTitle("ACTIVE USERS REQUESTS");
 
         requests.clear();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("request");
-
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, requests);
         requestlistView = (ListView) findViewById(R.id.listView);
         requests.add("Getting nearby requests");
@@ -160,7 +166,6 @@ public class DriverActivity extends AppCompatActivity {
 
             @Override
             public void onLocationChanged(Location location) {
-
                 requests.clear();
                 updateListView(location);
             }

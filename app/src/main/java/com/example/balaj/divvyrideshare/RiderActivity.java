@@ -1,8 +1,12 @@
 package com.example.balaj.divvyrideshare;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -10,6 +14,8 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,14 +36,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Map;
 
-public class RiderActivity extends FragmentActivity implements OnMapReadyCallback {
+public class RiderActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private FirebaseAuth firebaseAuth;
     private Button callRide;
-    private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private Boolean requestActive = false;
 
@@ -68,7 +73,7 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
 
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
-                    if (map != null){
+                    if (map != null && firebaseAuth.getCurrentUser().getUid() != null){
 
                         databaseReference.child(firebaseAuth.getCurrentUser().getUid()).removeValue();
                         requestActive = false;
@@ -89,7 +94,7 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
 
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                 final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (lastKnownLocation != null) {
+                if (lastKnownLocation != null && firebaseAuth.getCurrentUser().getUid() != null) {
 
                     final GeoPoints geoPoints = new GeoPoints(AESCrypt.encrypt(Double.toString(lastKnownLocation.getLatitude())),
                             AESCrypt.encrypt(Double.toString(lastKnownLocation.getLongitude())));
@@ -124,12 +129,17 @@ public class RiderActivity extends FragmentActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_rider);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        myToolbar.setBackgroundColor(Color.rgb(92,0,0));
+        myToolbar.setTitleTextColor(Color.WHITE);
+        setTitle("PICKUP LOCATION");
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         if( !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ) {
             Toast.makeText(this, "Location is not turned on. Please turn on location for accurate location.", Toast.LENGTH_SHORT).show();
         }
-        firebaseDatabase = FirebaseDatabase.getInstance();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("request");
         firebaseAuth = FirebaseAuth.getInstance();
         callRide = (Button)findViewById(R.id.callRide);

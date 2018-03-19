@@ -1,8 +1,10 @@
 package com.example.balaj.divvyrideshare;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,19 +19,21 @@ import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button submitNumber;
     private EditText cellNumber;
     private String mVerificationId;
-    private PhoneAuthProvider.ForceResendingToken mResendToken;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().hide();
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        myToolbar.setBackgroundColor(Color.rgb(92,0,0));
+        myToolbar.setTitleTextColor(Color.WHITE);
+        setTitle("LOGIN");
 
-        submitNumber = (Button)findViewById(R.id.submitNumber);
+        Button submitNumber = (Button) findViewById(R.id.submitNumber);
         cellNumber = (EditText)findViewById(R.id.cellNumber);
         Bundle bundle = getIntent().getExtras();
         String userType = "userType";
@@ -64,7 +68,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onCodeSent(String verificationId, PhoneAuthProvider.ForceResendingToken token) {
 
                 mVerificationId = verificationId;
-                mResendToken = token;
 
                 Intent i = new Intent(LoginActivity.this, CodeVerification.class);
                 Bundle bundle = new Bundle();
