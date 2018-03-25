@@ -43,6 +43,7 @@ public class DriverActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
+    private String userId;
 
     public DriverActivity() {
         requestLatitude = new ArrayList<>();
@@ -50,44 +51,107 @@ public class DriverActivity extends AppCompatActivity {
         requests = new ArrayList<>();
     }
 
-    public void signOutButton(View view){
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_driver);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        myToolbar.setBackgroundColor(Color.rgb(92,0,0));
+        myToolbar.setTitleTextColor(Color.WHITE);
+        setTitle("ACTIVE USERS REQUESTS");
 
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        requests.clear();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("request");
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, requests);
+        requestlistView = (ListView) findViewById(R.id.listView);
+        requests.add("Getting nearby requests");
+        requestlistView.setAdapter(arrayAdapter);
+
+        requestlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (Build.VERSION.SDK_INT > 23 || ContextCompat.checkSelfPermission(DriverActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    if (requestLatitude.size() > 0 && requestLongitude.size() >0 && lastKnownLocation != null){
+                        Intent intent = new Intent(getApplicationContext(), DriverLocationActivity.class);
+                        intent.putExtra("riderLatitude", requestLatitude.get(i));
+                        intent.putExtra("riderLongitude", requestLongitude.get(i));
+                        intent.putExtra("driverLatitude", lastKnownLocation.getLatitude());
+                        intent.putExtra("driverLongitude", lastKnownLocation.getLongitude());
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+
+            @Override
+            public void onLocationChanged(final Location location) {
+
+            }
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+            @Override
+            public void onProviderDisabled(String s) {
+                Toast.makeText(getApplicationContext(), "Please Turn On Location For Location.", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            updateListView(lastKnownLocation);
+        }
+    }
+
+    public void signOutButton(View view){
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signOut();
         Intent intent = new Intent(getApplicationContext(), GetStarted.class);
         startActivity(intent);
-
     }
 
     public void updateListView(final Location location) {
-
         requests.clear();
-
         if (location != null) {
-
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
                     requests.clear();
-
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         try {
-                            String lat = (String) snapshot.child("latitude").getValue();
-                            String lon = (String) snapshot.child("longitude").getValue();
-                            String latitude = AESCrypt.decrypt(lat);
-                            String longitude = AESCrypt.decrypt(lon);
-                            double distanceInMiles = (double) Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
-                            double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
-                            requests.add(Double.toString(distanceODP) + " km");
-                            requestLatitude.add(Double.parseDouble(latitude));
-                            requestLongitude.add(Double.parseDouble(longitude));
-                            requestlistView.requestLayout();
+                                String lat = (String) snapshot.child("latitude").getValue();
+                                String lon = (String) snapshot.child("longitude").getValue();
+                                String uId = (String) snapshot.child("userId").getValue();
+                                String latitude = AESCrypt.decrypt(lat);
+                                String longitude = AESCrypt.decrypt(lon);
+                                double distanceInMiles = (double) Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
+                                double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
+
+                                if (!uId.equals(userId)){
+                                    requests.add(Double.toString(distanceODP) + " km");
+                                    requestLatitude.add(Double.parseDouble(latitude));
+                                    requestLongitude.add(Double.parseDouble(longitude));
+                                }
+
                         } catch (Exception e) {
-                            Toast.makeText(DriverActivity.this, e.toString()+"", Toast.LENGTH_SHORT).show();;
+                            e.printStackTrace();
                         }
+                        arrayAdapter.notifyDataSetChanged();
                     }
-                    arrayAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -107,7 +171,6 @@ public class DriverActivity extends AppCompatActivity {
 
                 if (ContextCompat.checkSelfPermission(this,
                         android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                     Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     updateListView(lastKnownLocation);
@@ -117,88 +180,5 @@ public class DriverActivity extends AppCompatActivity {
                 Log.i("Error", "Permission Required");
             }
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        myToolbar.setBackgroundColor(Color.rgb(92,0,0));
-        myToolbar.setTitleTextColor(Color.WHITE);
-        setTitle("ACTIVE USERS REQUESTS");
-
-        requests.clear();
-        firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("request");
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, requests);
-        requestlistView = (ListView) findViewById(R.id.listView);
-        requests.add("Getting nearby requests");
-        requestlistView.setAdapter(arrayAdapter);
-
-
-        requestlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                if (Build.VERSION.SDK_INT > 23 || ContextCompat.checkSelfPermission(DriverActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                    if (requestLatitude.size() > 0 && requestLongitude.size() >0 && lastKnownLocation != null){
-
-                        Intent intent = new Intent(getApplicationContext(), DriverLocationActivity.class);
-                        intent.putExtra("riderLatitude", requestLatitude.get(i));
-                        intent.putExtra("riderLongitude", requestLongitude.get(i));
-                        intent.putExtra("driverLatitude", lastKnownLocation.getLatitude());
-                        intent.putExtra("driverLongitude", lastKnownLocation.getLongitude());
-                        startActivity(intent);
-
-                    }
-                }
-            }
-        });
-
-
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-
-            @Override
-            public void onLocationChanged(Location location) {
-                requests.clear();
-                updateListView(location);
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Toast.makeText(getApplicationContext(), "Please Turn On Location For Location.", Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
-        }else {
-
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-            updateListView(lastKnownLocation);
-
-        }
-
     }
 }

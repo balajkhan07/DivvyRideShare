@@ -28,4 +28,14 @@
         android:layout_height="match_parent"
         tools:context="com.example.balaj.divvyrideshare.DriverLocationActivity" />
 
+    <Button
+        android:id="@+id/acceptRequest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="11dp"
+        android:onClick="acceptRequest"
+        android:text="Accept Request" />
+
 </RelativeLayout>

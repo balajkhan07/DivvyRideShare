@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,7 +28,6 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
 
     private GoogleMap mMap;
     private static final double PADDING_PERCENTAGE = 0.12;
-    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
 
         mMap = googleMap;
         markers.add(mMap.addMarker(new MarkerOptions().position(driverLocation).title("Your Location")));
-        markers.add(mMap.addMarker(new MarkerOptions().position(riderLocation).title("Your Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
+        markers.add(mMap.addMarker(new MarkerOptions().position(riderLocation).title("Rider Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))));
 
 
         for (Marker marker : markers){
@@ -73,5 +73,9 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
                 mMap.animateCamera(cu);
             }
         });
+    }
+
+    public void acceptRequest(View view){
+
     }
 }

@@ -97,7 +97,7 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
                 if (lastKnownLocation != null && firebaseAuth.getCurrentUser().getUid() != null) {
 
                     final GeoPoints geoPoints = new GeoPoints(AESCrypt.encrypt(Double.toString(lastKnownLocation.getLatitude())),
-                            AESCrypt.encrypt(Double.toString(lastKnownLocation.getLongitude())));
+                            AESCrypt.encrypt(Double.toString(lastKnownLocation.getLongitude())), firebaseAuth.getCurrentUser().getUid());
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(geoPoints);
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
