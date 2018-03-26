@@ -37,6 +37,7 @@ public class DriverActivity extends AppCompatActivity {
     private ArrayList<String> requests;
     private ArrayList<Double> requestLatitude;
     private ArrayList<Double> requestLongitude;
+    private ArrayList<String> usernames;
     private ArrayAdapter arrayAdapter;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -49,6 +50,7 @@ public class DriverActivity extends AppCompatActivity {
         requestLatitude = new ArrayList<>();
         requestLongitude = new ArrayList<>();
         requests = new ArrayList<>();
+        usernames = new ArrayList<>();
     }
 
     @Override
@@ -81,6 +83,7 @@ public class DriverActivity extends AppCompatActivity {
                         intent.putExtra("riderLongitude", requestLongitude.get(i));
                         intent.putExtra("driverLatitude", lastKnownLocation.getLatitude());
                         intent.putExtra("driverLongitude", lastKnownLocation.getLongitude());
+                        intent.putExtra("riderUsername", usernames.get(i));
                         startActivity(intent);
                     }
                 }
@@ -138,13 +141,14 @@ public class DriverActivity extends AppCompatActivity {
                                 String uId = (String) snapshot.child("userId").getValue();
                                 String latitude = AESCrypt.decrypt(lat);
                                 String longitude = AESCrypt.decrypt(lon);
-                                double distanceInMiles = (double) Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
+                                double distanceInMiles = Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
                                 double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
 
-                                if (!uId.equals(userId)){
+                                if (!uId.equals(userId) || !uId.equals("driver")){
                                     requests.add(Double.toString(distanceODP) + " km");
                                     requestLatitude.add(Double.parseDouble(latitude));
                                     requestLongitude.add(Double.parseDouble(longitude));
+                                    usernames.add(uId);
                                 }
 
                         } catch (Exception e) {

@@ -19,6 +19,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -28,6 +34,9 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
 
     private GoogleMap mMap;
     private static final double PADDING_PERCENTAGE = 0.12;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +51,14 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
         myToolbar.setBackgroundColor(Color.rgb(92,0,0));
         myToolbar.setTitleTextColor(Color.WHITE);
         setTitle("DIRECTIONS FOR PICKUP");
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("request");
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Intent intent = getIntent();
+        intent = getIntent();
         LatLng driverLocation = new LatLng(intent.getDoubleExtra("driverLatitude", 0), intent.getDoubleExtra("driverLongitude",0));
         ArrayList<Marker> markers = new ArrayList<>();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -77,5 +89,21 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
 
     public void acceptRequest(View view){
 
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String uId = (String) snapshot.child("userId").getValue();
+                    if (uId.equals(intent.getStringExtra("riderUsername"))){
+                        databaseReference.child("userId").setValue("driver");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
