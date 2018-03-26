@@ -95,7 +95,7 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String uId = (String) snapshot.child("userId").getValue();
                     if (uId.equals(intent.getStringExtra("riderUsername"))){
-                        databaseReference.child("userId").setValue("driver");
+                        databaseReference.child(uId).child("userId").setValue("driver");
                     }
                 }
             }

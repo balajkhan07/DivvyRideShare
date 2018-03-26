@@ -19,41 +19,6 @@ public class GetStarted extends AppCompatActivity {
     private Switch userTypeSwitch;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Divvy Ride Share");
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
-        if (firebaseAuth.getCurrentUser() != null){
-
-            databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    User user = dataSnapshot.getValue(User.class);
-
-                    if (user.usertype != null && user.usertype.equals("rider")){
-
-                        Intent intent = new Intent(GetStarted.this, RiderActivity.class);
-                        startActivity(intent);
-                    }if (user.usertype != null && user.usertype.equals("driver")){
-
-                        Intent intent = new Intent(GetStarted.this, DriverActivity.class);
-                        startActivity(intent);
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_started);

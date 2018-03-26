@@ -144,11 +144,13 @@ public class DriverActivity extends AppCompatActivity {
                                 double distanceInMiles = Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
                                 double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
 
-                                if (!uId.equals(userId) || !uId.equals("driver")){
-                                    requests.add(Double.toString(distanceODP) + " km");
-                                    requestLatitude.add(Double.parseDouble(latitude));
-                                    requestLongitude.add(Double.parseDouble(longitude));
-                                    usernames.add(uId);
+                                if (!uId.equals(userId)){
+                                    if (!uId.equals("driver")){
+                                        requests.add(Double.toString(distanceODP) + " km");
+                                        requestLatitude.add(Double.parseDouble(latitude));
+                                        requestLongitude.add(Double.parseDouble(longitude));
+                                        usernames.add(uId);
+                                    }
                                 }
 
                         } catch (Exception e) {
