@@ -84,6 +84,9 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
 
                         intent = new Intent(SplashActivity.this, DriverActivity.class);
                         startActivity(intent);
+                    }if (user.usertype == null){
+                        intent = new Intent(SplashActivity.this, GetStarted.class);
+                        startActivity(intent);
                     }
                 }
 
@@ -97,8 +100,7 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
 
     @Override
     public void onAnimationEnd(Animation animation) {
-        intent = new Intent(SplashActivity.this, GetStarted.class);
-        startActivity(intent);
+
     }
 
     @Override

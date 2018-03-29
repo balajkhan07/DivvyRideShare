@@ -6,54 +6,72 @@
     android:layout_height="match_parent"
     tools:context="com.example.balaj.divvyrideshare.GetStarted">
 
-    <RelativeLayout
-        android:layout_width="368dp"
-        android:layout_height="495dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        tools:context=".GetStarted"
-        tools:layout_editor_absoluteX="8dp"
-        tools:ignore="MissingConstraints">
-
-        <Switch
-            android:id="@+id/userTypeSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/getStarted"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="24dp" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/layout_linear"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#5c0000"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:context=".GetStarted">
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/userTypeSwitch"
-            android:layout_alignBottom="@+id/userTypeSwitch"
-            android:layout_marginEnd="11dp"
-            android:layout_toStartOf="@+id/userTypeSwitch"
-            android:text="Rider" />
+            android:layout_height="91dp"
+            android:layout_marginBottom="17dp"
+            android:fontFamily="cursive"
+            android:text="Divvy"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="120px"
+            android:textStyle="bold"
+            tools:fontFamily="cursive" />
 
-        <TextView
-            android:id="@+id/textView3"
+        <ImageView
+            android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/userTypeSwitch"
-            android:layout_alignBottom="@+id/userTypeSwitch"
-            android:layout_marginStart="11dp"
-            android:layout_toEndOf="@+id/userTypeSwitch"
-            android:text="Driver" />
+            android:layout_marginBottom="22dp"
+            app:srcCompat="@drawable/car" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="11dp"
+                android:text="Rider"
+                android:textColor="#ffffff" />
+
+            <Switch
+                android:id="@+id/userTypeSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="23dp" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="11dp"
+                android:text="Driver"
+                android:textColor="#ffffff" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/getStarted"
-            android:layout_width="wrap_content"
+            android:background="#FFFFFF"
+            android:layout_width="133dp"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/textView3"
-            android:layout_alignParentBottom="true"
-            android:layout_alignStart="@+id/textView2"
-            android:layout_marginBottom="206dp"
+            android:layout_marginBottom="104dp"
             android:text="Get Started" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

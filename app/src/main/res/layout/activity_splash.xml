@@ -5,7 +5,7 @@
     android:id="@+id/layout_linear"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#30a825"
+    android:background="#5c0000"
     android:orientation="vertical"
     android:gravity="center">
 
@@ -26,4 +26,5 @@
         android:layout_height="wrap_content"
         android:src="@drawable/car"
         android:layout_gravity="center"/>
+
 </LinearLayout>
