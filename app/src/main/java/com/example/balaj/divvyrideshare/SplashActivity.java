@@ -3,7 +3,6 @@ package com.example.balaj.divvyrideshare;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,11 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class SplashActivity extends Activity implements Animation.AnimationListener {
 
-    Intent intent;
-    Animation animFadeIn;
-    LinearLayout linearLayout;
-    Animation rotate;
-    ImageView car;
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,31 +30,21 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
         if (Build.VERSION.SDK_INT < 16) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                     WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         } else {
             View decorView = getWindow().getDecorView();
-            // Hide the status bar.
             int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
             decorView.setSystemUiVisibility(uiOptions);
-            // Remember that you should never show the action bar if the
-            // status bar is hidden, so hide that too if necessary.
         }
-        // load the animation
-        rotate= AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotator);
-        car=(ImageView)findViewById(R.id.carimg);
 
+        Animation rotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotator);
+        ImageView car = (ImageView) findViewById(R.id.carimg);
+        Animation animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_fade_in);
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layout_linear);
 
-        animFadeIn = AnimationUtils.loadAnimation(getApplicationContext(),
-                R.anim.animation_fade_in);
-        // set animation listener
         animFadeIn.setAnimationListener(this);
-        // animation for image
-        linearLayout = (LinearLayout) findViewById(R.id.layout_linear);
-        // start the animation
         linearLayout.setVisibility(View.VISIBLE);
         linearLayout.startAnimation(animFadeIn);
         car.startAnimation(rotate);
-
     }
 
     @Override
@@ -77,14 +62,16 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
 
                     User user = dataSnapshot.getValue(User.class);
 
-                    if (user.usertype != null && user.usertype.equals("rider")){
+                    if (user.userType != null && user.userType.equals("rider")){
+
                         intent = new Intent(SplashActivity.this, RiderActivity.class);
                         startActivity(intent);
-                    }if (user.usertype != null && user.usertype.equals("driver")){
+                    }if (user.userType != null && user.userType.equals("driver")){
 
                         intent = new Intent(SplashActivity.this, DriverActivity.class);
                         startActivity(intent);
-                    }if (user.usertype == null){
+                    }if (user.userType == null){
+
                         intent = new Intent(SplashActivity.this, GetStarted.class);
                         startActivity(intent);
                     }

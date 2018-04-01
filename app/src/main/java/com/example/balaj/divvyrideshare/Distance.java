@@ -17,9 +17,7 @@ public class Distance {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-        double dist = earthRadius * c;
-
-        return dist; // output distance, in MILES
+        return earthRadius * c; // output distance, in MILES
     }
 
 }

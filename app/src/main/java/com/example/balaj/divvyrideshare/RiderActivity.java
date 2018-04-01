@@ -46,82 +46,6 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
     private DatabaseReference databaseReference;
     private Boolean requestActive = false;
 
-    public void updateMap(Location location){
-
-        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        map.clear();
-        map.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
-    }
-
-    public void signOutButton(View view){
-
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signOut();
-        Intent intent = new Intent(getApplicationContext(), GetStarted.class);
-        startActivity(intent);
-
-    }
-
-    public void callRideButton(View view) throws Exception {
-
-        if (requestActive) {
-
-            databaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-
-                    if (map != null && firebaseAuth.getCurrentUser().getUid() != null){
-
-                        databaseReference.child(firebaseAuth.getCurrentUser().getUid()).removeValue();
-                        requestActive = false;
-                        callRide.setText("Call A Ride");
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-        } else {
-
-            if (ContextCompat.checkSelfPermission(RiderActivity.this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-                final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (lastKnownLocation != null && firebaseAuth.getCurrentUser().getUid() != null) {
-
-                    final GeoPoints geoPoints = new GeoPoints(AESCrypt.encrypt(Double.toString(lastKnownLocation.getLatitude())),
-                            AESCrypt.encrypt(Double.toString(lastKnownLocation.getLongitude())), firebaseAuth.getCurrentUser().getUid());
-                    databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(geoPoints);
-                    databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-
-                            if (map != null){
-
-                                requestActive = true;
-                                callRide.setText("Cancel Ride");
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-                }
-            }
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -190,6 +114,65 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+    public void callRideButton(View view) throws Exception {
+
+        if (requestActive) {
+
+            databaseReference.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+
+                    if (map != null && firebaseAuth.getCurrentUser().getUid() != null){
+
+                        databaseReference.child(firebaseAuth.getCurrentUser().getUid()).removeValue();
+                        requestActive = false;
+                        callRide.setText("Call A Ride");
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+        } else {
+
+            if (ContextCompat.checkSelfPermission(RiderActivity.this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (lastKnownLocation != null && firebaseAuth.getCurrentUser().getUid() != null) {
+
+                    final GeoPoints geoPoints = new GeoPoints(AESCrypt.encrypt(Double.toString(lastKnownLocation.getLatitude())),
+                            AESCrypt.encrypt(Double.toString(lastKnownLocation.getLongitude())), firebaseAuth.getCurrentUser().getUid());
+                    databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(geoPoints);
+                    databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+
+                            if (map != null){
+
+                                requestActive = true;
+                                callRide.setText("Cancel Ride");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult ( int requestCode, String permissions[], int[] grantResults){
 
@@ -210,4 +193,22 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
             }
         }
     }
+
+    public void updateMap(Location location){
+
+        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        map.clear();
+        map.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
+    }
+
+    public void signOutButton(View view){
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth.signOut();
+        Intent intent = new Intent(getApplicationContext(), GetStarted.class);
+        startActivity(intent);
+
+    }
+
 }

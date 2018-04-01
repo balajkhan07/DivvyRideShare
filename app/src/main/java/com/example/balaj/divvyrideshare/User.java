@@ -2,15 +2,15 @@ package com.example.balaj.divvyrideshare;
 
 public class User {
 
-    public String usertype;
-    public double phoneNumber;
+    public String userType;
+    private double phoneNumber;
 
     public User() {
 
     }
 
-    public User(String usertype, double phoneNumber) {
-        this.usertype = usertype;
+    public User(String userType, double phoneNumber) {
+        this.userType = userType;
         this.phoneNumber = phoneNumber;
     }
 
