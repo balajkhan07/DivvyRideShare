@@ -1,18 +1,14 @@
 package com.example.balaj.divvyrideshare;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -147,8 +143,8 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
                 final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (lastKnownLocation != null && firebaseAuth.getCurrentUser().getUid() != null) {
 
-                    final GeoPoints geoPoints = new GeoPoints(AESCrypt.encrypt(Double.toString(lastKnownLocation.getLatitude())),
-                            AESCrypt.encrypt(Double.toString(lastKnownLocation.getLongitude())), firebaseAuth.getCurrentUser().getUid());
+                    final GeoPoints geoPoints = new GeoPoints(AESCrypt.Encrypt(Double.toString(lastKnownLocation.getLatitude())),
+                            AESCrypt.Encrypt(Double.toString(lastKnownLocation.getLongitude())), firebaseAuth.getCurrentUser().getUid());
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(geoPoints);
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override

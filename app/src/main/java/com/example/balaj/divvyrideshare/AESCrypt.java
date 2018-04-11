@@ -10,7 +10,7 @@ public class AESCrypt
     private static final String ALGORITHM = "AES";
     private static final String KEY = "1Hbfh667adfDEJ78";
 
-    public static String encrypt(String value) throws Exception
+    public static String Encrypt(String value) throws Exception
     {
         Key key = generateKey();
         Cipher cipher = Cipher.getInstance(AESCrypt.ALGORITHM);
@@ -21,7 +21,7 @@ public class AESCrypt
 
     }
 
-    public static String decrypt(String value) throws Exception
+    public static String Decrypt(String value) throws Exception
     {
         Key key = generateKey();
         Cipher cipher = Cipher.getInstance(AESCrypt.ALGORITHM);

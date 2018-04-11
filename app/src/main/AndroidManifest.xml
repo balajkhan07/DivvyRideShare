@@ -19,16 +19,25 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".CodeVerification" />
         <activity android:name=".GetStarted" />
-        <activity android:name=".RiderActivity" android:label="@string/title_activity_rider" />
+        <activity
+            android:name=".RiderActivity"
+            android:label="@string/title_activity_rider" />
         <activity android:name=".DriverActivity" />
-        <activity android:name=".DriverLocationActivity" android:label="@string/title_activity_driver_location" />
+        <activity
+            android:name=".DriverLocationActivity"
+            android:label="@string/title_activity_driver_location" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <meta-data android:name="com.google.android.geo.API_KEY" android:value="@string/google_maps_key" />
+        <activity android:name=".RecordRide" android:label="@string/title_activity_record_ride">
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
     </application>
 
 </manifest>

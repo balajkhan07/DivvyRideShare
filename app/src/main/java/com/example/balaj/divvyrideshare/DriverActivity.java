@@ -29,7 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class DriverActivity extends AppCompatActivity {
 
@@ -95,7 +94,7 @@ public class DriverActivity extends AppCompatActivity {
 
             @Override
             public void onLocationChanged(final Location location) {
-
+                updateListView(location);
             }
             @Override
             public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -146,8 +145,8 @@ public class DriverActivity extends AppCompatActivity {
                                 String lat = (String) snapshot.child("latitude").getValue();
                                 String lon = (String) snapshot.child("longitude").getValue();
                                 String uId = (String) snapshot.child("userId").getValue();
-                                String latitude = AESCrypt.decrypt(lat);
-                                String longitude = AESCrypt.decrypt(lon);
+                                String latitude = AESCrypt.Decrypt(lat);
+                                String longitude = AESCrypt.Decrypt(lon);
                                 double distanceInMiles = Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
                                 double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
 
@@ -184,7 +183,7 @@ public class DriverActivity extends AppCompatActivity {
 
                 if (ContextCompat.checkSelfPermission(this,
                         android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 1, locationListener);
                     Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     updateListView(lastKnownLocation);
                 }
