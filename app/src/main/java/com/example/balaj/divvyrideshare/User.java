@@ -3,7 +3,7 @@ package com.example.balaj.divvyrideshare;
 public class User {
 
     public String userType;
-    private double phoneNumber;
+    public double phoneNumber;
 
     public User() {
 

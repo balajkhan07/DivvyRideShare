@@ -1,14 +1,12 @@
 package com.example.balaj.divvyrideshare;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.CountDownTimer;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,12 +22,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class DriverLocationActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -96,9 +91,10 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String uId = (String) snapshot.child("userId").getValue();
                     if (uId.equals(intent.getStringExtra("riderUsername"))){
+                        Intent newIntent = new Intent(getApplicationContext(), RecordRide.class);
+                        newIntent.putExtra("riderUserId", intent.getStringExtra("riderUsername"));
                         databaseReference.child(uId).child("userId").setValue("driver");
-                        Intent intent = new Intent(getApplicationContext(), RecordRide.class);
-                        startActivity(intent);
+                        startActivity(newIntent);
                     }
                 }
             }
