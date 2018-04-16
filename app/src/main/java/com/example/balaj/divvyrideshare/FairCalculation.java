@@ -3,6 +3,7 @@ package com.example.balaj.divvyrideshare;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -17,11 +18,14 @@ public class FairCalculation extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private String riderUserId;
+    private TextView totalTime;
+    private TextView totalDistance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fair_calculation);
+
 
         intent = getIntent();
         riderUserId =  intent.getStringExtra("riderUserId");
@@ -31,12 +35,14 @@ public class FairCalculation extends AppCompatActivity {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//                String riderId = (String) dataSnapshot.child(riderUserId).getValue();
-                long totalTime = (long) dataSnapshot.child(riderUserId).child("totalTime").getValue();
-                double totalDistance = (double) dataSnapshot.child(riderUserId).child("totalDistance").getValue();
+                long totalT = (long) dataSnapshot.child(riderUserId).child("totalTime").getValue();
+                double totalD = (double) dataSnapshot.child(riderUserId).child("totalDistance").getValue();
 
-                Toast.makeText(FairCalculation.this, "Total Distance = " +totalDistance+ "Total Time = " +totalTime, Toast.LENGTH_SHORT).show();
+                totalTime = (TextView) findViewById(R.id.time);
+                totalDistance = (TextView) findViewById(R.id.distance);
 
+                totalTime.setText(totalT+"");
+                totalDistance.setText(totalD+"");
             }
 
             @Override
