@@ -12,7 +12,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -60,7 +59,7 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
             Toast.makeText(this, "Location is not turned on. Please turn on location for accurate location.", Toast.LENGTH_SHORT).show();
         }
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("request");
+        databaseReference = firebaseDatabase.getReference("Requests");
         firebaseAuth = FirebaseAuth.getInstance();
         callRide = (Button)findViewById(R.id.callRide);
     }
@@ -143,9 +142,9 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
                 final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (lastKnownLocation != null && firebaseAuth.getCurrentUser().getUid() != null) {
 
-                    final GeoPoints geoPoints = new GeoPoints(AESCrypt.Encrypt(Double.toString(lastKnownLocation.getLatitude())),
-                            AESCrypt.Encrypt(Double.toString(lastKnownLocation.getLongitude())), firebaseAuth.getCurrentUser().getUid());
-                    databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(geoPoints);
+                    final RiderUser riderUser = new RiderUser(AESCrypt.Encrypt(Double.toString(lastKnownLocation.getLatitude())),
+                            AESCrypt.Encrypt(Double.toString(lastKnownLocation.getLongitude())), firebaseAuth.getCurrentUser().getUid(), "null");
+                    databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(riderUser);
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -185,7 +184,7 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
                 }
             } else {
 
-                Log.i("Error", "Permission Required");
+                Toast.makeText(this, "Permission is required.", Toast.LENGTH_SHORT).show();
             }
         }
     }

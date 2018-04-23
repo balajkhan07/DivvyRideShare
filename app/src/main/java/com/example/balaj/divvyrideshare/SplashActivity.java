@@ -51,7 +51,7 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
     public void onAnimationStart(Animation animation) {
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Divvy Ride Share");
+        DatabaseReference databaseReference = firebaseDatabase.getReference("DivvyRideShare");
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
 
         if (firebaseAuth.getCurrentUser() != null){
@@ -60,13 +60,13 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    User user = dataSnapshot.getValue(User.class);
+                    AppUser appUser = dataSnapshot.getValue(AppUser.class);
 
-                    if (user.userType != null && user.userType.equals("rider")){
+                    if (appUser.userType != null && appUser.userType.equals("rider")){
 
                         intent = new Intent(SplashActivity.this, RiderActivity.class);
                         startActivity(intent);
-                    }if (user.userType != null && user.userType.equals("driver")){
+                    }if (appUser.userType != null && appUser.userType.equals("driver")){
 
                         intent = new Intent(SplashActivity.this, DriverActivity.class);
                         startActivity(intent);

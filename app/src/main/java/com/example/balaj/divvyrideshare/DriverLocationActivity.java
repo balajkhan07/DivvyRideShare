@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +33,7 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
     private static final double PADDING_PERCENTAGE = 0.12;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
     private Intent intent;
 
     @Override
@@ -48,8 +50,9 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
         myToolbar.setTitleTextColor(Color.WHITE);
         setTitle("DIRECTIONS FOR PICKUP");
 
+        firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("request");
+        databaseReference = firebaseDatabase.getReference("Requests");
     }
 
     @Override
@@ -88,12 +91,14 @@ public class DriverLocationActivity extends AppCompatActivity implements OnMapRe
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String uId = (String) snapshot.child("userId").getValue();
-                    if (uId.equals(intent.getStringExtra("riderUsername"))){
+                    String riderUserId = intent.getStringExtra("riderUsername");
+
+                    if (firebaseAuth.getCurrentUser().getUid().equals(intent.getStringExtra("driverUsername"))){
                         Intent newIntent = new Intent(getApplicationContext(), RecordRide.class);
                         newIntent.putExtra("riderUserId", intent.getStringExtra("riderUsername"));
-                        databaseReference.child(uId).child("userId").setValue("driver");
+                        databaseReference.child(riderUserId).child("driverUserId").setValue(firebaseAuth.getCurrentUser().getUid());
                         startActivity(newIntent);
                     }
                 }

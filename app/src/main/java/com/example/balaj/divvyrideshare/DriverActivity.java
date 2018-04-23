@@ -36,7 +36,8 @@ public class DriverActivity extends AppCompatActivity {
     private ArrayList<String> requests;
     private ArrayList<Double> requestLatitude;
     private ArrayList<Double> requestLongitude;
-    private ArrayList<String> usernames;
+    private ArrayList<String> driverUsernames;
+    private ArrayList<String> riderUsernames;
     private ArrayAdapter arrayAdapter;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -49,7 +50,8 @@ public class DriverActivity extends AppCompatActivity {
         requestLatitude = new ArrayList<>();
         requestLongitude = new ArrayList<>();
         requests = new ArrayList<>();
-        usernames = new ArrayList<>();
+        driverUsernames = new ArrayList<>();
+        riderUsernames = new ArrayList<>();
     }
 
     @Override
@@ -65,36 +67,47 @@ public class DriverActivity extends AppCompatActivity {
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         requests.clear();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("request");
+        databaseReference = firebaseDatabase.getReference("Requests");
+        firebaseAuth = FirebaseAuth.getInstance();
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, requests);
         requestlistView = (ListView) findViewById(R.id.listView);
         requests.add("Getting nearby requests");
         requestlistView.setAdapter(arrayAdapter);
 
-        requestlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (Build.VERSION.SDK_INT > 23 || ContextCompat.checkSelfPermission(DriverActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    if (requestLatitude.size() > 0 && requestLongitude.size() >0 && lastKnownLocation != null){
-                        Intent intent = new Intent(getApplicationContext(), DriverLocationActivity.class);
-                        intent.putExtra("riderLatitude", requestLatitude.get(i));
-                        intent.putExtra("riderLongitude", requestLongitude.get(i));
-                        intent.putExtra("driverLatitude", lastKnownLocation.getLatitude());
-                        intent.putExtra("driverLongitude", lastKnownLocation.getLongitude());
-                        intent.putExtra("riderUsername", usernames.get(i));
-                        startActivity(intent);
+        try {
+            requestlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (Build.VERSION.SDK_INT > 23 || ContextCompat.checkSelfPermission(DriverActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        if (requestLatitude.size() > 0 && requestLongitude.size() > 0 && lastKnownLocation != null) {
+                            Intent intent = new Intent(getApplicationContext(), DriverLocationActivity.class);
+                            intent.putExtra("riderLatitude", requestLatitude.get(i));
+                            intent.putExtra("riderLongitude", requestLongitude.get(i));
+                            intent.putExtra("driverLatitude", lastKnownLocation.getLatitude());
+                            intent.putExtra("driverLongitude", lastKnownLocation.getLongitude());
+                            intent.putExtra("driverUsername", firebaseAuth.getCurrentUser().getUid());
+                            intent.putExtra("riderUsername", riderUsernames.get(i));
+                            startActivity(intent);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }catch (Exception e){
+            Toast.makeText(this, e.toString()+"", Toast.LENGTH_SHORT).show();
+        }
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener = new LocationListener() {
 
             @Override
             public void onLocationChanged(final Location location) {
-                updateListView(location);
+
+                try {
+                    updateListView(location);
+                }catch (Exception e){
+                    Toast.makeText(DriverActivity.this, e.toString()+"", Toast.LENGTH_SHORT).show();
+                }
             }
             @Override
             public void onStatusChanged(String s, int i, Bundle bundle) {
@@ -144,19 +157,21 @@ public class DriverActivity extends AppCompatActivity {
                         try {
                                 String lat = (String) snapshot.child("latitude").getValue();
                                 String lon = (String) snapshot.child("longitude").getValue();
-                                String uId = (String) snapshot.child("userId").getValue();
+                                String driverUserId = (String) snapshot.child("driverUserId").getValue();
+                                String riderUserId = (String) snapshot.child("riderUserId").getValue();
                                 String latitude = AESCrypt.Decrypt(lat);
                                 String longitude = AESCrypt.Decrypt(lon);
                                 double distanceInMiles = Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
                                 double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
 
-                                if (!uId.equals(userId)){
-                                    if (!uId.equals("driver")){
+                                if (!driverUserId.equals(userId) && driverUserId.equals("null")){
+
                                         requests.add(Double.toString(distanceODP) + " km");
                                         requestLatitude.add(Double.parseDouble(latitude));
                                         requestLongitude.add(Double.parseDouble(longitude));
-                                        usernames.add(uId);
-                                    }
+                                        driverUsernames.add(driverUserId);
+                                        riderUsernames.add(riderUserId);
+
                                 }
 
                         } catch (Exception e) {

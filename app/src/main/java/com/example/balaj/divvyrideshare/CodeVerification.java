@@ -39,7 +39,7 @@ public class CodeVerification extends AppCompatActivity {
         setTitle("SMS VERIFICATION");
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        mFirebaseReference = firebaseDatabase.getReference("Divvy Ride Share");
+        mFirebaseReference = firebaseDatabase.getReference("DivvyRideShare");
         mAuth = FirebaseAuth.getInstance();
         codeVerify = (EditText)findViewById(R.id.codeVerify);
         Button submitCode = (Button) findViewById(R.id.submitCode);
@@ -68,12 +68,12 @@ public class CodeVerification extends AppCompatActivity {
                 if (task.isSuccessful()) {
 
                     if (getUserType.equals("rider")) {
-                        User users = new User(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
+                        AppUser users = new AppUser(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
                         mFirebaseReference.child(mAuth.getCurrentUser().getUid()).setValue(users);
                         Intent intent = new Intent(CodeVerification.this, RiderActivity.class);
                         startActivity(intent);
                     }if (getUserType.equals("driver")){
-                        User users = new User(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
+                        AppUser users = new AppUser(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
                         mFirebaseReference.child(mAuth.getCurrentUser().getUid()).setValue(users);
                         Intent intent = new Intent(CodeVerification.this, DriverActivity.class);
                         startActivity(intent);
