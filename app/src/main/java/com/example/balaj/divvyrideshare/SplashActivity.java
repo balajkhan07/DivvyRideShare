@@ -21,11 +21,18 @@ import com.google.firebase.database.ValueEventListener;
 public class SplashActivity extends Activity implements Animation.AnimationListener {
 
     private Intent intent;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("DivvyRideShare");
+        firebaseAuth = FirebaseAuth.getInstance();
 
         if (Build.VERSION.SDK_INT < 16) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -50,10 +57,6 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
     @Override
     public void onAnimationStart(Animation animation) {
 
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = firebaseDatabase.getReference("DivvyRideShare");
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-
         if (firebaseAuth.getCurrentUser() != null){
 
             databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
@@ -62,11 +65,12 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
 
                     AppUser appUser = dataSnapshot.getValue(AppUser.class);
 
-                    if (appUser.userType != null && appUser.userType.equals("rider")){
+                    if (appUser != null ? appUser.userType.equals("rider") : false) {
 
                         intent = new Intent(SplashActivity.this, RiderActivity.class);
                         startActivity(intent);
-                    }if (appUser.userType != null && appUser.userType.equals("driver")){
+                    }
+                    if (appUser != null ? appUser.userType.equals("driver") : false) {
 
                         intent = new Intent(SplashActivity.this, DriverActivity.class);
                         startActivity(intent);
