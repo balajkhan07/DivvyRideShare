@@ -2,8 +2,8 @@ package com.example.balaj.divvyrideshare;
 
 public class AppUser {
 
-    public String userType;
-    public double phoneNumber;
+    String userType;
+    double phoneNumber;
 
     public AppUser() {
 

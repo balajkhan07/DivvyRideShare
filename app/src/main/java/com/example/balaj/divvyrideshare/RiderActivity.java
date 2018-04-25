@@ -8,12 +8,14 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,6 +42,8 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
     private Button callRide;
     private DatabaseReference databaseReference;
     private Boolean requestActive = false;
+    private Handler handler;
+    private TextView infoTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,35 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
         databaseReference = firebaseDatabase.getReference("Requests");
         firebaseAuth = FirebaseAuth.getInstance();
         callRide = (Button)findViewById(R.id.callRide);
+        infoTextView = (TextView)findViewById(R.id.infoTextView);
+        handler = new Handler();
+
+        databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+
+                if (map != null){
+
+                    requestActive = true;
+                    callRide.setText("Cancel Ride");
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            checkForUpdates();
+                        }
+                    }, 3000);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -155,6 +188,14 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
 
                                 requestActive = true;
                                 callRide.setText("Cancel Ride");
+
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+                                        checkForUpdates();
+                                    }
+                                }, 3000);
                             }
                         }
 
@@ -204,6 +245,35 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
         Intent intent = new Intent(getApplicationContext(), GetStarted.class);
         startActivity(intent);
 
+    }
+
+    public void checkForUpdates() {
+
+        databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                if (!((map != null ? map.get("driverUserId") : null) != null && map.get("driverUserId").equals("null"))){
+
+                    infoTextView.setText("Your Driver Is On The Way.");
+                    callRide.setVisibility(View.INVISIBLE);
+                }
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        checkForUpdates();
+                    }
+                }, 3000);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

@@ -52,4 +52,12 @@
         android:onClick="signOutButton"
         android:text="Sign Out" />
 
+    <TextView
+        android:id="@+id/infoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/callRide"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="19dp" />
+
 </RelativeLayout>
