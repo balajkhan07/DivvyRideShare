@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -25,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -48,6 +50,7 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private String riderUserId;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,7 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        handler = new Handler();
         intent = getIntent();
         riderUserId = intent.getStringExtra("riderUserId");
         rideButton = findViewById(R.id.rideButton);
@@ -66,6 +70,7 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
     public void startEndRide(View view){
 
         if (rideActive){
+
             rideButton.setText("Start Ride");
             cal2 = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
             currentLocalTime2 = cal2.getTime();
@@ -73,80 +78,21 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
             date.setTimeZone(TimeZone.getTimeZone("GMT+5:00"));
             rideActive = false;
 
-            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            locationListener = new LocationListener() {
-
-                @Override
-                public void onLocationChanged(Location location) {
-                    totalDistance = updateDistance(location);
-                    databaseReference.child(riderUserId).child("totalDistance").setValue(totalDistance);
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-                    Toast.makeText(RecordRide.this, "Please Turn On Location For Location.", Toast.LENGTH_SHORT).show();
-                }
-            };
-
             intent = new Intent(getApplicationContext(), FairCalculation.class);
             long totalTime = printDifference(currentLocalTime1,currentLocalTime2);
             databaseReference.child(riderUserId).child("totalTime").setValue(totalTime);
             intent.putExtra("riderUserId", riderUserId);
             startActivity(intent);
 
-            if (ContextCompat.checkSelfPermission(RecordRide.this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(RecordRide.this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            } else {
-
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 1, locationListener);
-                Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                if (lastKnownLocation != null) {
-                    updateMap(lastKnownLocation);
-                }
-            }
         }else {
+
             rideButton.setText("End Ride");
             cal1 = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
             currentLocalTime1 = cal1.getTime();
             DateFormat date = new SimpleDateFormat("HH:mm:ss a");
             date.setTimeZone(TimeZone.getTimeZone("GMT+5:00"));
             rideActive = true;
-            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-            locationListener = new LocationListener() {
-
-                @Override
-                public void onLocationChanged(Location location) {
-
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-                    Toast.makeText(RecordRide.this, "Please Turn On Location For Location.", Toast.LENGTH_SHORT).show();
-                }
-            };
+            startCalculatingDistance();
 
             if (ContextCompat.checkSelfPermission(RecordRide.this,
                     android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -161,7 +107,94 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
                     prevLocation = lastKnownLocation;
                 }
             }
+
         }
+    }
+
+    public void startCalculatingDistance(){
+
+        if (ContextCompat.checkSelfPermission(RecordRide.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(RecordRide.this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        } else {
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 1, locationListener);
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocation != null) {
+                updateMap(lastKnownLocation);
+            }
+        }
+
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                totalDistance = updateDistance(location);
+                DecimalFormat decimalFormat = new DecimalFormat("#");
+                databaseReference.child(riderUserId).child("totalDistance").setValue(decimalFormat.format(totalDistance));
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+                Toast.makeText(RecordRide.this, "Please Turn On Location For Location.", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+    }
+
+    public double updateDistance(Location location) {
+
+        double distanceToLast = location.distanceTo(prevLocation);
+
+        // if less than 1 metres, do not record
+        if (distanceToLast < 1.00) {
+            Log.i("Location Not Record.", "Minor Change.");
+        } else{
+            distance += distanceToLast;
+        }
+
+        prevLocation = location;
+        return distance;
+    }
+
+    public void updateMap(Location location){
+
+        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        map.clear();
+        map.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
+    }
+
+    public long printDifference(Date startDate, Date endDate) {
+
+        long different = endDate.getTime() - startDate.getTime();
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+
+        long elapsedSeconds = different / secondsInMilli;
+
+        return elapsedSeconds;
     }
 
     @Override
@@ -189,7 +222,7 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
 
             @Override
             public void onProviderDisabled(String s) {
-                Toast.makeText(RecordRide.this, "Please Turn On Location For Location.", Toast.LENGTH_SHORT).show();
+
             }
         };
 
@@ -227,44 +260,4 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
             }
         }
     }
-
-    public void updateMap(Location location){
-
-        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        map.clear();
-        map.addMarker(new MarkerOptions().position(userLocation).title("Your Location"));
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 16));
-    }
-
-    public long printDifference(Date startDate, Date endDate) {
-
-        long different = endDate.getTime() - startDate.getTime();
-
-        long secondsInMilli = 1000;
-        long minutesInMilli = secondsInMilli * 60;
-        long hoursInMilli = minutesInMilli * 60;
-
-        long elapsedHours = different / hoursInMilli;
-        different = different % hoursInMilli;
-
-        long elapsedMinutes = different / minutesInMilli;
-        different = different % minutesInMilli;
-
-        long elapsedSeconds = different / secondsInMilli;
-
-        return elapsedSeconds;
-    }
-
-    private double updateDistance(Location location) {
-        double distanceToLast = location.distanceTo(prevLocation);
-        // if less than 1 metres, do not record
-        if (distanceToLast < 1.00) {
-            Log.i("DISTANCE", "Values too close, so not used.");
-        } else{
-            distance += distanceToLast;
-        }
-        prevLocation = location;
-        return distance;
-    }
-
 }

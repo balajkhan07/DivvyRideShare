@@ -3,4 +3,6 @@
     <string name="title_activity_rider">Map</string>
     <string name="title_activity_driver_location">Map</string>
     <string name="title_activity_record_ride">Map</string>
+    <string name="facebook_app_id">794653234067161</string>
+    <string name="fb_login_protocol_scheme">fb794653234067161</string>
 </resources>
