@@ -36,7 +36,7 @@ public class FairCalculation extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 long totalT = (long) dataSnapshot.child(riderUserId).child("totalTime").getValue();
-                double totalD = (double) dataSnapshot.child(riderUserId).child("totalDistance").getValue();
+                long totalD = (long) dataSnapshot.child(riderUserId).child("totalDistance").getValue();
 
                 totalTime = (TextView) findViewById(R.id.time);
                 totalDistance = (TextView) findViewById(R.id.distance);

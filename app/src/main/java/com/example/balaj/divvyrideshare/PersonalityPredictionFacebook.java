@@ -16,6 +16,9 @@ import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class PersonalityPredictionFacebook extends AppCompatActivity {
 
     private CallbackManager callbackManager;
@@ -40,9 +43,6 @@ public class PersonalityPredictionFacebook extends AppCompatActivity {
                     }
                 }
         ).executeAsync();
-
-        HttpRequests httpRequests = new HttpRequests();
-        httpRequests.execute("https://api.applymagicsauce.com/auth");
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);

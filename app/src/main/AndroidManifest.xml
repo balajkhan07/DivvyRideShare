@@ -42,7 +42,8 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".FairCalculation" />
-        <activity android:name=".PersonalityPredictionFacebook"></activity>
+        <activity android:name=".PersonalityPredictionFacebook">
+        </activity>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>

@@ -26,7 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -120,7 +119,7 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         } else {
 
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 1, locationListener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 6, locationListener);
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (lastKnownLocation != null) {
                 updateMap(lastKnownLocation);
@@ -133,8 +132,8 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
             @Override
             public void onLocationChanged(Location location) {
                 totalDistance = updateDistance(location);
-                DecimalFormat decimalFormat = new DecimalFormat("#");
-                databaseReference.child(riderUserId).child("totalDistance").setValue(decimalFormat.format(totalDistance));
+                int td = (int)totalDistance;
+                databaseReference.child(riderUserId).child("totalDistance").setValue(td);
             }
 
             @Override
@@ -159,9 +158,9 @@ public class RecordRide extends FragmentActivity implements OnMapReadyCallback {
 
         double distanceToLast = location.distanceTo(prevLocation);
 
-        // if less than 1 metres, do not record
-        if (distanceToLast < 1.00) {
-            Log.i("Location Not Record.", "Minor Change.");
+        // if less than 0.5 metres, do not record
+        if (distanceToLast < 0.5) {
+            //
         } else{
             distance += distanceToLast;
         }
