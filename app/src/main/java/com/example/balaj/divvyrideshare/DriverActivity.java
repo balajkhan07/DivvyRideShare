@@ -9,6 +9,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -104,7 +105,7 @@ public class DriverActivity extends AppCompatActivity {
             public void onLocationChanged(final Location location) {
 
                 try {
-                    updateListView(location);
+                    //updateListView(location);
                 }catch (Exception e){
                     Toast.makeText(DriverActivity.this, e.toString()+"", Toast.LENGTH_SHORT).show();
                 }
@@ -130,6 +131,7 @@ public class DriverActivity extends AppCompatActivity {
             Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             updateListView(lastKnownLocation);
         }
+
     }
 
     @Override
@@ -171,13 +173,13 @@ public class DriverActivity extends AppCompatActivity {
                                         requestLongitude.add(Double.parseDouble(longitude));
                                         driverUsernames.add(driverUserId);
                                         riderUsernames.add(riderUserId);
+                                        arrayAdapter.notifyDataSetChanged();
 
                                 }
 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        arrayAdapter.notifyDataSetChanged();
                     }
                 }
 

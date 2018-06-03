@@ -51,4 +51,12 @@ public class FairCalculation extends AppCompatActivity {
             }
         });
     }
+
+    public void onBackPressed() {
+
+        Intent intent = new Intent(getApplicationContext(), DriverActivity.class);
+        startActivity(intent);
+
+    }
+
 }

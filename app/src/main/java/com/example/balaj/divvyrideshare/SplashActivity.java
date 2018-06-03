@@ -24,6 +24,7 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
+    private AppUser appUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,18 +64,8 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    AppUser appUser = dataSnapshot.getValue(AppUser.class);
+                    appUser = dataSnapshot.getValue(AppUser.class);
 
-                    if (appUser != null ? appUser.userType.equals("rider") : false) {
-
-                        intent = new Intent(SplashActivity.this, RiderActivity.class);
-                        startActivity(intent);
-                    }
-                    if (appUser != null ? appUser.userType.equals("driver") : false) {
-
-                        intent = new Intent(SplashActivity.this, DriverActivity.class);
-                        startActivity(intent);
-                    }
                 }
 
                 @Override
@@ -87,8 +78,21 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
 
     @Override
     public void onAnimationEnd(Animation animation) {
-        intent = new Intent(SplashActivity.this, GetStarted.class);
-        startActivity(intent);
+
+        if (appUser != null ? appUser.userType.equals("rider") : false) {
+
+            intent = new Intent(SplashActivity.this, RiderActivity.class);
+            startActivity(intent);
+        }
+        if (appUser != null ? appUser.userType.equals("driver") : false) {
+
+            intent = new Intent(SplashActivity.this, DriverActivity.class);
+            startActivity(intent);
+        }else {
+
+            intent = new Intent(SplashActivity.this, GetStarted.class);
+            startActivity(intent);
+        }
     }
 
     @Override

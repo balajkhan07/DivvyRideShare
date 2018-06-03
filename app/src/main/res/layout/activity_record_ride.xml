@@ -1,44 +1,58 @@
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:map="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.balaj.divvyrideshare.RecordRide" />
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:map="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.example.balaj.divvyrideshare.RecordRide">
+
+    </fragment>
 
     <Button
         android:id="@+id/rideButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="18dp"
-        android:onClick="startEndRide"
-        android:text="Start Ride" />
-
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="33dp"
-        android:layout_marginTop="18dp"
-        android:text="TextView" />
+        android:layout_marginBottom="14dp"
+        android:layout_marginStart="18dp"
+        android:onClick="startEndRide"
+        android:text="Start Ride One" />
 
-    <TextView
-        android:id="@+id/timeElapsedView"
+    <Button
+        android:id="@+id/requestList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/time"
-        android:layout_alignBottom="@+id/time"
+        android:layout_above="@+id/rideButton2"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="28dp"
-        android:text="TextView" />
+        android:layout_marginBottom="19dp"
+        android:layout_marginEnd="13dp"
+        android:onClick="getRequestsList"
+        android:text="Requests List" />
+
+    <Button
+        android:id="@+id/rideButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/rideButton"
+        android:layout_alignBottom="@+id/rideButton"
+        android:layout_alignEnd="@+id/requestList"
+        android:onClick="startEndRide2"
+        android:text="Start Ride Two" />
 
 </RelativeLayout>
