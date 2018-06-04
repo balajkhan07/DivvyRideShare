@@ -2,8 +2,8 @@ package com.example.balaj.divvyrideshare;
 
 public class RiderUser {
 
-    String latitude;
-    String longitude;
+    double latitude;
+    double longitude;
     String riderUserId;
     String driverUserId;
 
@@ -11,7 +11,7 @@ public class RiderUser {
 
     }
 
-    RiderUser(String lat, String lon, String riderUserId, String driverUserId){
+    RiderUser(double lat, double lon, String riderUserId, String driverUserId){
 
         this.latitude = lat;
         this.longitude = lon;

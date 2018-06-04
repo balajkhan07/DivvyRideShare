@@ -2,6 +2,7 @@ package com.example.balaj.divvyrideshare;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -44,6 +45,7 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
     private Boolean requestActive = false;
     private Handler handler;
     private TextView infoTextView;
+    private SharedPreferences.Editor prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
         }
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Requests");
+        prefs = getSharedPreferences("UserType", MODE_PRIVATE).edit();
         firebaseAuth = FirebaseAuth.getInstance();
         callRide = (Button)findViewById(R.id.callRide);
         infoTextView = (TextView)findViewById(R.id.infoTextView);
@@ -175,8 +178,7 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
                 final Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                 if (lastKnownLocation != null && firebaseAuth.getCurrentUser().getUid() != null) {
 
-                    final RiderUser riderUser = new RiderUser(AESCrypt.Encrypt(Double.toString(lastKnownLocation.getLatitude())),
-                            AESCrypt.Encrypt(Double.toString(lastKnownLocation.getLongitude())), firebaseAuth.getCurrentUser().getUid(), "null");
+                    final RiderUser riderUser = new RiderUser(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude(), firebaseAuth.getCurrentUser().getUid(), "null");
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).setValue(riderUser);
                     databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -240,6 +242,8 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
 
     public void signOutButton(View view){
 
+        prefs.remove("userType");
+        prefs.apply();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signOut();
         Intent intent = new Intent(getApplicationContext(), GetStarted.class);
@@ -249,31 +253,35 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
 
     public void checkForUpdates() {
 
-        databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        if (firebaseAuth != null) {
 
-                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                if (!((map != null ? map.get("driverUserId") : null) != null && map.get("driverUserId").equals("null"))){
+            databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    infoTextView.setText("Your Driver Is On The Way.");
-                    callRide.setVisibility(View.INVISIBLE);
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    if (!((map != null ? map.get("driverUserId") : null) != null && map.get("driverUserId").equals("null"))) {
+
+                        infoTextView.setText("Your Driver Is On The Way.");
+                        callRide.setVisibility(View.INVISIBLE);
+                    }
+
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            checkForUpdates();
+                        }
+                    }, 3000);
                 }
 
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                        checkForUpdates();
-                    }
-                }, 3000);
-            }
+                }
+            });
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        }
     }
 
 }

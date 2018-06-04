@@ -6,9 +6,18 @@
     android:layout_height="match_parent"
     tools:context="com.example.balaj.divvyrideshare.FairCalculation">
 
-    <RelativeLayout android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
 
         <TextView
@@ -16,9 +25,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="44dp"
-            android:layout_marginTop="29dp"
+            android:layout_below="@+id/my_toolbar"
+            android:layout_marginStart="47dp"
+            android:layout_marginTop="91dp"
             android:text="Total Time" />
 
         <TextView
@@ -30,6 +39,40 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="62dp"
             android:text="Total Distance" />
+
+        <TextView
+            android:id="@+id/time2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/time"
+            android:layout_centerVertical="true"
+            android:text="Total Time 2" />
+
+        <TextView
+            android:id="@+id/distance2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/distance"
+            android:layout_alignTop="@+id/time2"
+            android:text="Total Distance 2" />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/my_toolbar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="31dp"
+            android:text="Ride One" />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/textView5"
+            android:layout_below="@+id/distance"
+            android:layout_marginTop="44dp"
+            android:text="Ride Two" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>

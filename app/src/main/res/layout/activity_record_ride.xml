@@ -55,4 +55,14 @@
         android:onClick="startEndRide2"
         android:text="Start Ride Two" />
 
+    <Button
+        android:id="@+id/proceedToPayment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/requestList"
+        android:layout_alignBottom="@+id/requestList"
+        android:layout_alignStart="@+id/rideButton"
+        android:onClick="proceedToPayment"
+        android:text="Procced To Payment" />
+
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.example.balaj.divvyrideshare;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +26,8 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
-    private AppUser appUser;
+    private SharedPreferences prefs;
+    private String userTypeInPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,8 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("DivvyRideShare");
         firebaseAuth = FirebaseAuth.getInstance();
+        prefs = getSharedPreferences("UserType", MODE_PRIVATE);
+        userTypeInPref = prefs.getString("userType", null);
 
         if (Build.VERSION.SDK_INT < 16) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -58,13 +63,11 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
     @Override
     public void onAnimationStart(Animation animation) {
 
-        if (firebaseAuth.getCurrentUser() != null){
+        if (firebaseAuth != null && firebaseAuth.getCurrentUser() != null){
 
             databaseReference.child(firebaseAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    appUser = dataSnapshot.getValue(AppUser.class);
 
                 }
 
@@ -79,17 +82,19 @@ public class SplashActivity extends Activity implements Animation.AnimationListe
     @Override
     public void onAnimationEnd(Animation animation) {
 
-        if (appUser != null ? appUser.userType.equals("rider") : false) {
-
-            intent = new Intent(SplashActivity.this, RiderActivity.class);
-            startActivity(intent);
-        }
-        if (appUser != null ? appUser.userType.equals("driver") : false) {
-
-            intent = new Intent(SplashActivity.this, DriverActivity.class);
-            startActivity(intent);
-        }else {
-
+        if (userTypeInPref != null) {
+            String uType = prefs.getString("userType", "NoUserAvailable");//"No name defined" is the default value.
+            if (uType.equals("rider")){
+                intent = new Intent(SplashActivity.this, RiderActivity.class);
+                startActivity(intent);
+            }else if (uType.equals("driver")){
+                intent = new Intent(SplashActivity.this, DriverActivity.class);
+                startActivity(intent);
+            }else{
+                intent = new Intent(SplashActivity.this, GetStarted.class);
+                startActivity(intent);
+            }
+        }else{
             intent = new Intent(SplashActivity.this, GetStarted.class);
             startActivity(intent);
         }

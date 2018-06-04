@@ -3,6 +3,7 @@ package com.example.balaj.divvyrideshare;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -46,6 +47,7 @@ public class DriverActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private String userId;
+    private SharedPreferences.Editor prefs;
 
     public DriverActivity() {
         requestLatitude = new ArrayList<>();
@@ -65,6 +67,7 @@ public class DriverActivity extends AppCompatActivity {
         myToolbar.setTitleTextColor(Color.WHITE);
         setTitle("ACTIVE USERS REQUESTS");
 
+        prefs = getSharedPreferences("UserType", MODE_PRIVATE).edit();
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         requests.clear();
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -142,6 +145,9 @@ public class DriverActivity extends AppCompatActivity {
     }
 
     public void signOutButton(View view){
+
+        prefs.remove("userType");
+        prefs.apply();
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signOut();
         Intent intent = new Intent(getApplicationContext(), GetStarted.class);
@@ -157,26 +163,22 @@ public class DriverActivity extends AppCompatActivity {
                     requests.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         try {
-                                String lat = (String) snapshot.child("latitude").getValue();
-                                String lon = (String) snapshot.child("longitude").getValue();
-                                String driverUserId = (String) snapshot.child("driverUserId").getValue();
-                                String riderUserId = (String) snapshot.child("riderUserId").getValue();
-                                String latitude = AESCrypt.Decrypt(lat);
-                                String longitude = AESCrypt.Decrypt(lon);
-                                double distanceInMiles = Distance.distance(Double.parseDouble(latitude), Double.parseDouble(longitude), location.getLatitude(), location.getLongitude());
-                                double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
+                            double latitude = (double) snapshot.child("latitude").getValue();
+                            double longitude = (double) snapshot.child("longitude").getValue();
+                            String driverUserId = (String) snapshot.child("driverUserId").getValue();
+                            String riderUserId = (String) snapshot.child("riderUserId").getValue();
+                            double distanceInMiles = Distance.distance(latitude, longitude, location.getLatitude(), location.getLongitude());
+                            double distanceODP = (double) Math.round(distanceInMiles * 1.60934 * 10) / 10;
 
-                                if (!driverUserId.equals(userId) && driverUserId.equals("null")){
+                            if (!driverUserId.equals(userId) && driverUserId.equals("null")){
 
-                                        requests.add(Double.toString(distanceODP) + " km");
-                                        requestLatitude.add(Double.parseDouble(latitude));
-                                        requestLongitude.add(Double.parseDouble(longitude));
-                                        driverUsernames.add(driverUserId);
-                                        riderUsernames.add(riderUserId);
-                                        arrayAdapter.notifyDataSetChanged();
-
-                                }
-
+                                requests.add(Double.toString(distanceODP) + " km");
+                                requestLatitude.add(latitude);
+                                requestLongitude.add(longitude);
+                                driverUsernames.add(driverUserId);
+                                riderUsernames.add(riderUserId);
+                                arrayAdapter.notifyDataSetChanged();
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

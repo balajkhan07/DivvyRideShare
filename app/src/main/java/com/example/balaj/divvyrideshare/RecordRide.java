@@ -35,6 +35,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
@@ -51,6 +52,7 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
     private Boolean rideActiveTwo = false;
     private Button rideButton;
     private Button rideButton2;
+    private Button proceedToPayment;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Location prevLocation;
@@ -62,7 +64,7 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
     private String riderUserId;
     private String riderUserId2;
     private Boolean rideIsActive = false;
-    long totalTime;
+    private long totalTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,7 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
         Toast.makeText(this, riderUserId2.toString()+"", Toast.LENGTH_SHORT).show();
         rideButton = findViewById(R.id.rideButton);
         rideButton2 = findViewById(R.id.rideButton2);
+        proceedToPayment = findViewById(R.id.proceedToPayment);
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("RecordRide");
         firebaseDatabaseCheckRide = FirebaseDatabase.getInstance();
@@ -91,11 +94,25 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                String driverUserId = (String) dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("driverUserId").getValue();
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
-                if (driverUserId != null && driverUserId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                if (map != null) {
 
-                   riderUserId = (String) dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("riderUserId").getValue();
+                    String driverUserId = (String) dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("driverUserId").getValue();
+                    boolean rideIsActive = (boolean) dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("rideIsActive").getValue();
+
+                    if (driverUserId != null && driverUserId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                        riderUserId = (String) dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("riderUserId").getValue();
+                        Toast.makeText(RecordRide.this, riderUserId.toString()+"", Toast.LENGTH_SHORT).show();
+                        rideButton.setText("End Ride One");
+                        cal1 = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
+                        currentLocalTime1 = cal1.getTime();
+                        DateFormat date = new SimpleDateFormat("HH:mm:ss a");
+                        date.setTimeZone(TimeZone.getTimeZone("GMT+5:00"));
+                        rideActiveOne = true;
+                        startCalculatingDistance();
+                    }
                 }
             }
 
@@ -116,13 +133,9 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
             DateFormat date = new SimpleDateFormat("HH:mm:ss a");
             date.setTimeZone(TimeZone.getTimeZone("GMT+5:00"));
             rideActiveOne = false;
-
-            intent = new Intent(getApplicationContext(), FairCalculation.class);
             totalTime = printDifference(currentLocalTime1,currentLocalTime2);
             databaseReferenceCheckRide.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
             databaseReference.child(riderUserId).child("totalTime").setValue(totalTime);
-            intent.putExtra("riderUserId", riderUserId);
-            startActivity(intent);
 
         }else {
 
@@ -169,13 +182,8 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
             DateFormat date = new SimpleDateFormat("HH:mm:ss a");
             date.setTimeZone(TimeZone.getTimeZone("GMT+5:00"));
             rideActiveTwo = false;
-
-            intent = new Intent(getApplicationContext(), FairCalculation.class);
             long totalTime = printDifference(currentLocalTime1,currentLocalTime2);
             databaseReference.child(riderUserId2).child("totalTime").setValue(totalTime);
-            intent.putExtra("riderUserId", riderUserId2);
-            startActivity(intent);
-
         }else {
 
             rideButton2.setText("End Ride Two");
@@ -200,6 +208,14 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
                 }
             }
         }
+    }
+
+    public void proceedToPayment(View view){
+
+        intent = new Intent(getApplicationContext(), FairCalculation.class);
+        intent.putExtra("riderUserId", riderUserId);
+        intent.putExtra("riderUserId2", riderUserId2);
+        startActivity(intent);
     }
 
     public void startCalculatingDistance(){

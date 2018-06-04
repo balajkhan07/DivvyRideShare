@@ -1,6 +1,7 @@
 package com.example.balaj.divvyrideshare;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,6 +28,7 @@ public class CodeVerification extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference mFirebaseReference;
     private String getUserType;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class CodeVerification extends AppCompatActivity {
         mFirebaseReference = firebaseDatabase.getReference("DivvyRideShare");
         mAuth = FirebaseAuth.getInstance();
         codeVerify = (EditText)findViewById(R.id.codeVerify);
+        editor = getSharedPreferences("UserType", MODE_PRIVATE).edit();
         Button submitCode = (Button) findViewById(R.id.submitCode);
         final PhoneAuthCredential[] credential = new PhoneAuthCredential[1];
         Bundle bundle = getIntent().getExtras();
@@ -70,11 +73,15 @@ public class CodeVerification extends AppCompatActivity {
                     if (getUserType.equals("rider")) {
                         AppUser users = new AppUser(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
                         mFirebaseReference.child(mAuth.getCurrentUser().getUid()).setValue(users);
+                        editor.putString("userType", "rider");
+                        editor.apply();
                         Intent intent = new Intent(CodeVerification.this, RiderActivity.class);
                         startActivity(intent);
                     }if (getUserType.equals("driver")){
                         AppUser users = new AppUser(getUserType, Double.valueOf(mAuth.getCurrentUser().getPhoneNumber()));
                         mFirebaseReference.child(mAuth.getCurrentUser().getUid()).setValue(users);
+                        editor.putString("userType", "driver");
+                        editor.apply();
                         Intent intent = new Intent(CodeVerification.this, DriverActivity.class);
                         startActivity(intent);
                     }
