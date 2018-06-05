@@ -31,7 +31,6 @@
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -44,7 +43,6 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".FairCalculation" />
-        <activity android:name=".PersonalityPredictionFacebook" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -66,8 +64,8 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".PersonalityClassify"></activity>
-        <activity android:name=".PersonalityClassifyColors"></activity>
+        <activity android:name=".PersonalityClassifyColors">
+        </activity>
     </application>
 
 </manifest>

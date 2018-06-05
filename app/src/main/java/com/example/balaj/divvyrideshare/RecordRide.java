@@ -81,7 +81,6 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
         intent = getIntent();
         riderUserId = intent.getStringExtra("riderUserId");
         riderUserId2 = intent.getStringExtra("riderUserId");
-        Toast.makeText(this, riderUserId2.toString()+"", Toast.LENGTH_SHORT).show();
         rideButton = findViewById(R.id.rideButton);
         rideButton2 = findViewById(R.id.rideButton2);
         proceedToPayment = findViewById(R.id.proceedToPayment);
@@ -104,7 +103,6 @@ public class RecordRide extends AppCompatActivity implements OnMapReadyCallback 
                     if (driverUserId != null && driverUserId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
 
                         riderUserId = (String) dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("riderUserId").getValue();
-                        Toast.makeText(RecordRide.this, riderUserId.toString()+"", Toast.LENGTH_SHORT).show();
                         rideButton.setText("End Ride One");
                         cal1 = Calendar.getInstance(TimeZone.getTimeZone("GMT+5:00"));
                         currentLocalTime1 = cal1.getTime();

@@ -52,13 +52,13 @@ public class FairCalculation extends AppCompatActivity {
 
                 totalTime = (TextView) findViewById(R.id.time);
                 totalDistance = (TextView) findViewById(R.id.distance);
-                totalTime.setText(totalT+"");
-                totalDistance.setText(totalD+"");
+                totalTime.setText(totalT+" Time");
+                totalDistance.setText(totalD+" Distance");
 
                 totalTime2 = (TextView) findViewById(R.id.time2);
                 totalDistance2 = (TextView) findViewById(R.id.distance2);
-                totalTime2.setText(totalT2+"");
-                totalDistance2.setText(totalD2+"");
+                totalTime2.setText(totalT2+" Time");
+                totalDistance2.setText(totalD2+" Distance");
             }
 
             @Override
