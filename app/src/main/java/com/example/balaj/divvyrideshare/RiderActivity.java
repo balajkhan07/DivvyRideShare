@@ -218,8 +218,10 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
 
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                boolean isEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
                 if (ContextCompat.checkSelfPermission(this,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && isEnabled) {
 
                     locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
                     Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -227,7 +229,7 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
                 }
             } else {
 
-                Toast.makeText(this, "Permission is required.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please enable location.", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -282,6 +284,13 @@ public class RiderActivity extends AppCompatActivity implements OnMapReadyCallba
             });
 
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
     }
 
 }
